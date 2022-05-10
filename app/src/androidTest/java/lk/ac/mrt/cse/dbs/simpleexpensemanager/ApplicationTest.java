@@ -16,9 +16,6 @@
 
 package lk.ac.mrt.cse.dbs.simpleexpensemanager;
 
-//import android.app.Application;
-//import android.test.ApplicationTestCase;
-
 import android.content.Context;
 
 import androidx.test.core.app.ApplicationProvider;
@@ -27,21 +24,21 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
+import static lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.ExpenseType.EXPENSE;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.control.ExpenseManager;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.control.PersistentExpenseManager;
 import lk.ac.mrt.cse.dbs.simpleexpensemanager.control.exception.ExpenseManagerException;
+import lk.ac.mrt.cse.dbs.simpleexpensemanager.data.model.Transaction;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
-//public class ApplicationTest extends ApplicationTestCase<Application> {
-//    public ApplicationTest() {
-//        super(Application.class);
-//    }
-//}
-
 public class ApplicationTest{
     private static ExpenseManager expenseManager;
 
@@ -59,9 +56,12 @@ public class ApplicationTest{
     }
 
     @Test
-    public void getAccountTest() {
-        expenseManager.addAccount("8756D", "XYZ", "Zee", 7025.0);
-        List<String> accountNumbers = expenseManager.getAccountNumbersList();
-        assertTrue(accountNumbers.contains("8756D"));
+    public void addTransactionTest() throws ParseException {
+        Date transactionDate = new SimpleDateFormat("dd-MM-yyyy").parse("08-12-2021");
+        expenseManager.getTransactionsDAO().logTransaction(transactionDate, "1234Z", EXPENSE, 2200.0);
+        List<Transaction> transactions = expenseManager.getTransactionsDAO().getAllTransactionLogs();
+
+        Transaction transaction = transactions.get(transactions.size()-1);
+        assertTrue(transaction.getAccountNo().equals("1234Z") && transaction.getAmount()==2200.0 && transaction.getExpenseType()==EXPENSE);
     }
 }
